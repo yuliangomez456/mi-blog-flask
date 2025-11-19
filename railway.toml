@@ -1,18 +1,8 @@
 ﻿[build]
-builder = \"nixpacks\"
+builder = "nixpacks"
 
 [deploy]
-startCommand = \"python run.py\"
-healthCheckPath = \"/\"
-healthCheckTimeout = 300
+startCommand = "python railway_setup.py && gunicorn app:app --bind 0.0.0.0:"
 
-[[services]]
-name = \"web\"
-port = 5000
-
-[[services]]
-name = \"postgres\"
-type = \"postgresql\"
-
-[hooks]
-postDeploy = \"python railway_setup.py\"
+[environment]
+FLASK_ENV = "production"
