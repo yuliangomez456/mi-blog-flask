@@ -1,0 +1,18 @@
+﻿[build]
+builder = \"nixpacks\"
+
+[deploy]
+startCommand = \"python run.py\"
+healthCheckPath = \"/\"
+healthCheckTimeout = 300
+
+[[services]]
+name = \"web\"
+port = 5000
+
+[[services]]
+name = \"postgres\"
+type = \"postgresql\"
+
+[hooks]
+postDeploy = \"python railway_setup.py\"
