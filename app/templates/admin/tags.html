@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Administrar Etiquetas - Mi Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Administrar Etiquetas</h1>
+            <a href="{{ url_for('admin.admin_posts') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Posts
+            </a>
+        </div>
+
+        <!-- Formulario para crear etiqueta -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Crear Nueva Etiqueta</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                        {% for error in form.name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                        <div class="form-text">Máximo 30 caracteres. Se generará automáticamente una versión para URL.</div>
+                    </div>
+                    
+                    {{ form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de etiquetas existentes -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Etiquetas Existentes</h5>
+            </div>
+            <div class="card-body">
+                {% if tags %}
+                <div class="row">
+                    {% for tag in tags %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body py-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-secondary me-2">{{ tag.posts|length }}</span>
+                                        <strong>{{ tag.name }}</strong>
+                                        <br>
+                                        <small class="text-muted">/{{ tag.slug }}</small>
+                                    </div>
+                                    <form action="{{ url_for('admin.delete_tag', tag_id=tag.id) }}" 
+                                          method="POST" 
+                                          onsubmit="return confirm('¿Eliminar esta etiqueta? Se eliminará de todos los posts.');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <h5>No hay etiquetas creadas</h5>
+                    <p class="text-muted">Crea tu primera etiqueta usando el formulario de arriba.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Información</h5>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted">
+                    Las etiquetas te permiten agregar palabras clave a tus posts.
+                    Un post puede tener múltiples etiquetas.
+                </p>
+                <ul class="small">
+                    <li>Usa palabras clave específicas</li>
+                    <li>Puedes asignar múltiples etiquetas a un post</li>
+                    <li>Las etiquetas ayudan en la búsqueda y organización</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Mi Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0"><i class="bi bi-lock"></i> Iniciar Sesión</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                        {% for error in form.username.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                        {% for error in form.password.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    {{ form.submit(class="btn btn-primary w-100 py-2") }}
+                </form>
+                
+                <div class="mt-3 text-center">
+                    <p class="mb-0">¿No tienes cuenta? 
+                        <a href="{{ url_for('auth.register') }}" class="text-decoration-none">Regístrate</a>
+                    </p>
+                </div>
+                
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-center mb-2">Credenciales para desarrollo:</h6>
+                    <div class="text-center small">
+                        <strong>Admin:</strong> admin / admin123<br>
+                        <strong>Usuario normal:</strong> Crea una cuenta
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

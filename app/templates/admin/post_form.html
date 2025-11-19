@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Mi Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="h4 mb-0">{{ title }}</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                        {% for error in form.title.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.excerpt.label(class="form-label") }}
+                        {{ form.excerpt(class="form-control" + (" is-invalid" if form.excerpt.errors else "")) }}
+                        <div class="form-text">Resumen breve que aparecerá en la lista de posts (opcional).</div>
+                        {% for error in form.excerpt.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.category.label(class="form-label") }}
+                                {{ form.category(class="form-select" + (" is-invalid" if form.category.errors else "")) }}
+                                {% for error in form.category.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.tags.label(class="form-label") }}
+                                {{ form.tags(class="form-select" + (" is-invalid" if form.tags.errors else ""), size="5") }}
+                                <div class="form-text">Mantén Ctrl (Cmd en Mac) para seleccionar múltiples etiquetas.</div>
+                                {% for error in form.tags.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.content.label(class="form-label") }}
+                        {{ form.content(class="form-control", rows="15") }}
+                        {% for error in form.content.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3 form-check form-switch">
+                        {{ form.published(class="form-check-input") }}
+                        {{ form.published.label(class="form-check-label") }}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('admin.admin_posts') }}" class="btn btn-secondary">Cancelar</a>
+                        
+                        {% if post %}
+                        <a href="{{ url_for('main.post', slug=post.slug) }}" 
+                           class="btn btn-outline-info ms-auto" target="_blank">
+                            Ver Post
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Enlaces a gestión de categorías y etiquetas -->
+        <div class="mt-3 text-center">
+            <small class="text-muted">
+                ¿Necesitas crear una categoría o etiqueta? 
+                <a href="{{ url_for('admin.admin_categories') }}">Gestionar Categorías</a> | 
+                <a href="{{ url_for('admin.admin_tags') }}">Gestionar Etiquetas</a>
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}

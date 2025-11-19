@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Posts Populares - Mi Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>
+                <i class="bi bi-fire text-danger"></i>
+                Posts Populares
+            </h1>
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al inicio
+            </a>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            Posts más populares basados en likes y favoritos de la comunidad.
+        </div>
+
+        {% if posts.items %}
+            {% for post in posts.items %}
+            <article class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title h4">
+                        <a href="{{ url_for('main.post', slug=post.slug) }}" 
+                           class="text-decoration-none text-dark">
+                            {{ post.title }}
+                        </a>
+                    </h2>
+                    
+                    <div class="post-meta text-muted small mb-3">
+                        <i class="bi bi-person"></i> Por {{ post.author.username }} 
+                        | <i class="bi bi-calendar"></i> {{ post.created_at.strftime('%d de %B, %Y') }}
+                        | <i class="bi bi-chat"></i> {{ post.comments|length }} comentarios
+                        | <i class="bi bi-heart text-danger"></i> {{ post.likes_count }} likes
+                        | <i class="bi bi-star text-warning"></i> {{ post.favorites_count }} favoritos
+                        {% if post.category %}
+                        | <i class="bi bi-folder"></i> 
+                        <a href="{{ url_for('main.category_posts', slug=post.category.slug) }}" class="text-muted">
+                            {{ post.category.name }}
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    {% if post.excerpt %}
+                    <p class="card-text text-muted">{{ post.excerpt }}</p>
+                    {% else %}
+                    <p class="card-text">{{ post.content|striptags|truncate(200) }}</p>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('main.post', slug=post.slug) }}" 
+                       class="btn btn-primary btn-sm">Leer más</a>
+                </div>
+            </article>
+            {% endfor %}
+
+            <!-- Paginación -->
+            {% if posts.pages > 1 %}
+            <nav aria-label="Paginación de populares">
+                <ul class="pagination justify-content-center">
+                    {% if posts.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.popular_posts', page=posts.prev_num) }}">
+                            Anterior
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in posts.iter_pages(left_edge=2, left_current=2, right_current=2, right_edge=2) %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == posts.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('main.popular_posts', page=page_num) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.popular_posts', page=posts.next_num) }}">
+                            Siguiente
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <h3>No hay posts populares aún</h3>
+                <p class="text-muted">Los posts aparecerán aquí cuando reciban likes y favoritos.</p>
+                <a href="{{ url_for('main.index') }}" class="btn btn-primary">Ver todos los posts</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

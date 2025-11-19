@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Mi Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Posts principales -->
+    <div class="col-lg-8">
+        <h1 class="mb-4">Últimos Posts</h1>
+        
+        {% if posts.items %}
+            {% for post in posts.items %}
+            
+            <article class="card mb-4 shadow-hover">
+                <div class="card-body">
+                    <h2 class="card-title h4">
+                        <a href="{{ url_for('main.post', slug=post.slug) }}" 
+                        class="text-decoration-none text-dark post-title">
+                            {{ post.title }}
+                        </a>
+                    </h2>
+                    
+                    <!-- En la sección de cada post, actualizar la meta información -->
+                    <div class="post-meta text-muted small mb-3">
+                        <i class="bi bi-person"></i> Por {{ post.author.username }} 
+                        | <i class="bi bi-calendar"></i> {{ post.created_at.strftime('%d de %B, %Y') }}
+                        | <i class="bi bi-chat"></i> {{ post.comments|length }} comentarios
+                        {% if post.category %}
+                        | <i class="bi bi-folder"></i> 
+                        <a href="{{ url_for('main.category_posts', slug=post.category.slug) }}" class="text-muted">
+                            {{ post.category.name }}
+                        </a>
+                        {% endif %}
+                        {% if post.tags %}
+                        | <i class="bi bi-tags"></i> 
+                        {% for tag in post.tags %}
+                        <a href="{{ url_for('main.tag_posts', slug=tag.slug) }}" class="text-muted">
+                            {{ tag.name }}{% if not loop.last %}, {% endif %}
+                        </a>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    {% if post.excerpt %}
+                    <p class="card-text text-muted excerpt">{{ post.excerpt }}</p>
+                    {% else %}
+                    <p class="card-text excerpt">{{ post.content|striptags|truncate(200) }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <a href="{{ url_for('main.post', slug=post.slug) }}" 
+                        class="btn btn-primary btn-sm">Leer más</a>
+                        <small class="text-muted">Tiempo de lectura: {{ (post.content|length / 200)|round|int }} min</small>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+
+            <!-- Paginación -->
+            <nav aria-label="Paginación de posts">
+                <ul class="pagination justify-content-center">
+                    {% if posts.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.index', page=posts.prev_num) }}">
+                            Anterior
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in posts.iter_pages(left_edge=2, left_current=2, right_current=2, right_edge=2) %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == posts.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('main.index', page=page_num) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.index', page=posts.next_num) }}">
+                            Siguiente
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% else %}
+            <div class="text-center py-5">
+                <h3>No hay posts publicados aún</h3>
+                <p class="text-muted">Vuelve pronto para ver contenido interesante.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Sobre el Blog</h5>
+            </div>
+            <div class="card-body">
+                <p>Bienvenido a mi blog personal. Aquí comparto tutoriales, pensamientos y experiencias sobre desarrollo web y tecnología.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Categorías</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-decoration-none">Flask</a></li>
+                    <li><a href="#" class="text-decoration-none">Python</a></li>
+                    <li><a href="#" class="text-decoration-none">Bootstrap</a></li>
+                    <li><a href="#" class="text-decoration-none">Desarrollo Web</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
