@@ -1,0 +1,17 @@
+$railwayContent = @'
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "python run.py"
+
+[[services]]
+name = "web"
+port = 5000
+
+[[services]]
+name = "postgres" 
+type = "postgresql"
+'@
+
+$railwayContent | Out-File -FilePath railway.toml -Encoding utf8
